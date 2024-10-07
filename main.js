@@ -2,6 +2,8 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GSAP from 'gsap'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+
 
 import SceneManager from './src/managers/SceneManager'
 import Petals from './src/objects/Petals.js'
@@ -38,6 +40,7 @@ function init() {
     scene.add(light);
     scene.add(new THREE.AmbientLight(0xffffff, 0.1));
 
+    
     createSkybox();
     createFloor();
     createObjects();
@@ -73,6 +76,7 @@ function createFloor() {
     floorMesh.receiveShadow = true;
     scene.add(floorMesh);
 }
+
 
 function createObjects() {
     const boxGeometry = new THREE.BoxGeometry(2, 2, 2);
@@ -115,10 +119,12 @@ function createButton(imageSrc, altText, left, top) {
   button.src = imageSrc;
   button.alt = altText;
   button.style.position = 'absolute';
+  button.style.transform = 'translateY(500%)'; // Adjust to the center
   button.style.left = left;
   button.style.top = top;
+  
   button.style.cursor = 'pointer';
-  button.style.width = '80px'; // Adjust size as needed
+  button.style.width = '90px'; // Adjust size as needed
   button.style.height = 'auto';
   document.body.appendChild(button);
   return button;

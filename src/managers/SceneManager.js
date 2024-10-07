@@ -44,7 +44,7 @@ export default class SceneManager {
             y: 0,
             z: 0,
             duration: 1,
-            ease: 'power2.inOut'
+           // ease: 'power2'
         })
     }
 
@@ -61,7 +61,7 @@ export default class SceneManager {
             y: scene.group.userData.unmountToPosition.y,
             z: scene.group.userData.unmountToPosition.z,
             duration: 1,
-            ease: 'power2.inOut',
+           // ease: 'power2',
             // Når animationen er færdig, fjern scenen fra stage
             onComplete: () => {
                 this.stage.remove(scene.group)
