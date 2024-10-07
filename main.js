@@ -102,20 +102,24 @@ function createMesh(geometry, material, x, y, z, name, layer) {
     return mesh;
 }
 function createButtons() {
-  const previousButton = createButton('Previous Scene', '10px', '10px');
-  const nextButton = createButton('Next Scene', 'auto', '10px');
+  const previousButton = createButton('public/texture/Left .png', 'Previous Scene', '10px', '10px');
+  const nextButton = createButton('public/texture/Right.png', 'Next Scene', 'auto', '10px');
   nextButton.style.right = '10px';
 
   previousButton.addEventListener('click', () => sceneManager.previousScene());
   nextButton.addEventListener('click', () => sceneManager.nextScene());
 }
 
-function createButton(text, left, top) {
-  const button = document.createElement('button');
-  button.innerText = text;
+function createButton(imageSrc, altText, left, top) {
+  const button = document.createElement('img');
+  button.src = imageSrc;
+  button.alt = altText;
   button.style.position = 'absolute';
   button.style.left = left;
   button.style.top = top;
+  button.style.cursor = 'pointer';
+  button.style.width = '80px'; // Adjust size as needed
+  button.style.height = 'auto';
   document.body.appendChild(button);
   return button;
 }
