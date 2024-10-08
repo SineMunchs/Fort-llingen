@@ -19,8 +19,8 @@ export default class Scene1 {
             console.log('Model loaded:', gltf); // Debugging log
             this._3dmodel = gltf.scene;
             this._3dmodel.scale.set(0.1, 0.1, 0.1); // Use a neutral scale to start
-            this._3dmodel.position.set(2, 1.1, 0); // Set to origin initially
-            this._3dmodel.rotation.set(0, 0.09, 0); // Set to origin initially
+            this._3dmodel.position.set(-5, 1, 0); // Set to origin initially
+            this._3dmodel.rotation.set(0, -0.2, 0); // Set to origin initially
             this.group.add(this._3dmodel);
         }, undefined, (error) => {
             console.error('Error loading GLTF model:', error); // Handle errors
@@ -30,7 +30,7 @@ export default class Scene1 {
         //loader.load('src/3D /cherry1.glb', (gltf) => {
             console.log('CherryBlossoms Model loaded:', gltf); // Debugging log
             this._cherryBlossomsModel = gltf.scene;
-            this._cherryBlossomsModel.scale.set(3, 3, 3); // Scale as needed
+            this._cherryBlossomsModel.scale.set(6, 6, 6); // Scale as needed
 
             //this._cherryBlossomsModel.scale.set(0.1, 0.1, 0.1); // Scale as needed
             this._cherryBlossomsModel.position.set(-2, 2, 0 ); // Set position

@@ -57,6 +57,10 @@ function init() {
     sceneManager.mountScene(0);
 }
 
+function dtr(d){
+    return d * (Math.PI/180);
+}
+
 function createSkybox() {
     const textureLoader = new THREE.TextureLoader();
     const backgroundTexture = textureLoader.load('public/texture/clouds4.png');
