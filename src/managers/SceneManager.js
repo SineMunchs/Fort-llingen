@@ -2,6 +2,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GSAP from 'gsap'
 
+
+
 import Scene1 from '../scenes/Scene1'
 import Scene2 from '../scenes/Scene2'
 

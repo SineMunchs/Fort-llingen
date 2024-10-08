@@ -6,11 +6,11 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 
 import SceneManager from './src/managers/SceneManager'
-import Petals from './src/objects/Petals.js'
+//import Petals from './src/objects/Petals.js'
 import Grass from './src/objects/Grass.js'
 
 let scene, camera, renderer, controls;
-let sceneManager, petals, grass, floorMesh;
+let sceneManager, /*petals*/ grass, floorMesh;
 
 function init() {
     // Setup renderer
@@ -46,7 +46,7 @@ function init() {
     createObjects();
 
     // Create petals and grass
-    petals = new Petals(scene);
+    //petals = new Petals(scene);
     grass = new Grass(scene);
 
     createButtons();
@@ -172,7 +172,7 @@ function animate() {
     requestAnimationFrame(animate);
     controls.update();
     sceneManager.updateScene();
-    petals.updatePetals();
+   // petals.updatePetals();
 
     // Update grass
     if (grass.grassMesh) {
