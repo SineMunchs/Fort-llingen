@@ -5,7 +5,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 export default class Scene1 {
     constructor() {
         this.group = new THREE.Group()
-        this.createGeometry()
         this.createLight()
         this.load3DModel()
         this.updateUserData({
@@ -27,23 +26,20 @@ export default class Scene1 {
             console.error('Error loading GLTF model:', error); // Handle errors
         });
 
-        loader.load('src/3D /cherry1.glb', (gltf) => {
+        loader.load('src/3D /basiccherry.glb', (gltf) => {
+        //loader.load('src/3D /cherry1.glb', (gltf) => {
             console.log('CherryBlossoms Model loaded:', gltf); // Debugging log
             this._cherryBlossomsModel = gltf.scene;
-            this._cherryBlossomsModel.scale.set(0.1, 0.1, 0.1); // Scale as needed
-            this._cherryBlossomsModel.position.set(0, -1, 3); // Set position
+            this._cherryBlossomsModel.scale.set(3, 3, 3); // Scale as needed
+
+            //this._cherryBlossomsModel.scale.set(0.1, 0.1, 0.1); // Scale as needed
+            this._cherryBlossomsModel.position.set(-2, 2, 0 ); // Set position
             this._cherryBlossomsModel.rotation.set(0, Math.PI / 4, 0); // Set rotation
             this.group.add(this._cherryBlossomsModel); // Add to the scene group
+            this.createTreeSpotlight(); // Create spotlight after the tree is loaded
         }, undefined, (error) => {
             console.error('Error loading CherryBlossoms GLTF model:', error); // Handle errors
         });
-    }
-
-    createGeometry() {
-        const geometry = new THREE.SphereGeometry()
-        const material = new THREE.MeshStandardMaterial({ color: 0x0000ff, wireframe: true })
-        this.sphere = new THREE.Mesh(geometry, material)
-        this.group.add(this.sphere)
     }
 
     updateUserData(userData) {
@@ -55,13 +51,25 @@ export default class Scene1 {
         this.group.add(ambientLight)
 
         const spotLight = new THREE.SpotLight(0xffffff, 8, 20, Math.PI / 4, 0.1, 2)
-        spotLight.position.set(0, 1, 1)
-        spotLight.target = this.sphere
+        spotLight.position.set(0, 5, 5)
         this.group.add(spotLight)
 
         this.spotLightHelper = new SpotLightHelper(spotLight)
         // Uncomment the next line if you want to add the spotlight helper to the scene
         // this.group.add(this.spotLightHelper)
+    }
+
+    createTreeSpotlight() {
+        if (this._cherryBlossomsModel) {
+            const treeSpotLight = new THREE.SpotLight(0xffffff, 5, 10, Math.PI / 6, 0.5, 2)
+            treeSpotLight.position.set(0, 5, 5) // Position the light above and in front of the tree
+            treeSpotLight.target = this._cherryBlossomsModel
+            this.group.add(treeSpotLight)
+
+            // Uncomment the next line if you want to add a helper for the tree spotlight
+            // const treeSpotLightHelper = new SpotLightHelper(treeSpotLight)
+            // this.group.add(treeSpotLightHelper)
+        }
     }
 
     adjustModel() {
@@ -73,8 +81,6 @@ export default class Scene1 {
     }
 
     update() {
-        this.sphere.rotation.x += 0.01
-        this.sphere.rotation.y += 0.01
         this.adjustModel()
     }
 }
