@@ -8,6 +8,7 @@ export default class Scene3 {
         this.group = new THREE.Group()
         this.mouse = new THREE.Vector2()
         this.flowerPosition = 0
+        this.lastUpdateTime = 0
         this.init()
     }
 
@@ -15,6 +16,7 @@ export default class Scene3 {
         this.createLights()
         this.load3DModels()
         this.createStars()
+        this.createTypewriterText()
         this.updateUserData()
         this.setupEventListeners()
     }
@@ -129,6 +131,72 @@ export default class Scene3 {
         this.group.add(this.stars)
     }
 
+    // === Add typewriter text ===
+    createTypewriterText() {
+        const canvas = document.createElement('canvas')
+        canvas.width = 500
+        canvas.height = 220
+        this.ctx = canvas.getContext('2d')
+
+        this.textTexture = new THREE.CanvasTexture(canvas)
+        const material = new THREE.SpriteMaterial({ map: this.textTexture })
+        this.textSprite = new THREE.Sprite(material)
+
+        this.textSprite.scale.set(5, 2.5, 0.5)
+        this.textSprite.position.set(-6.7, 0.2, 6)
+
+    // this.textSprite.scale.set(10, 5, 1) // You might want to adjust this
+   // this.textSprite.position.set(-8, 2, 6) // Moved more to the left and slightly up
+
+        this.group.add(this.textSprite)
+
+        this.fullText = "The Daruma doll is a special symbol of good luck, happiness, and never giving up! Some people say it can even protect you from bad things and bring in lots of good things."
+        this.currentText = ""
+        this.textIndex = 0
+        this.updateInterval = 50 // milliseconds between each character
+        this.isTextComplete = false
+        this.fadeStartTime = 0
+    }
+
+    updateTypewriterText() {
+        const currentTime = performance.now()
+        if (currentTime - this.lastUpdateTime > this.updateInterval && this.textIndex < this.fullText.length) {
+            this.currentText += this.fullText[this.textIndex]
+            this.textIndex++
+            this.lastUpdateTime = currentTime
+
+    //=== text font ===
+            this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+            this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+            this.ctx.font = '20px Arial'
+            this.ctx.fillStyle = 'white'
+            this.wrapText(this.ctx, this.currentText, 20, 50, this.ctx.canvas.width - 40, 40)
+
+            this.textTexture.needsUpdate = true
+
+        }
+    }
+
+    wrapText(context, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ')
+        let line = ''
+
+        for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' '
+            const metrics = context.measureText(testLine)
+            const testWidth = metrics.width
+            if (testWidth > maxWidth && n > 0) {
+                context.fillText(line, x, y)
+                line = words[n] + ' '
+                y += lineHeight
+            } else {
+                line = testLine
+            }
+        }
+        context.fillText(line, x, y)
+    }
+
 
     updateUserData() {
         this.group.userData = {
@@ -161,6 +229,7 @@ export default class Scene3 {
         if (this.spotLightHelper) {
             this.spotLightHelper.update()
         }
-       
+        this.updateTypewriterText()
+
     }
 }

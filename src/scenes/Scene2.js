@@ -7,10 +7,16 @@ export default class Scene2 {
         this.group = new THREE.Group()
         this.mouse = new THREE.Vector2()
         this.lastUpdateTime = 0
+        this.texts = [
+            "A long time ago, a magical creator named Lucky Cat wanted to give the world luck, happiness, and strength. But these weren't things you just got, you had to earn them!",
+            "That’s why the Daruma doll was made without any eyes. You see, to give Daruma his eyes, you need to work hard and try your best.",
+            "But there was a little problem—without eyes, how could Daruma see the bright and wonderful world? How could he know the difference between light and darkness?",
+            "So, Lucky Cat gave Daruma one eye to explore the world! And Daruma went on to share a very special message: if you work hard and do your best, you can *earn* good luck, happiness, and even share it with others!"
+        ]
+        this.currentTextIndex = 0
         this.init()
     }
 
-    //=== ADD it on the top of the init() function ===
     init() {
         this.createLights()
         this.load3DModels()
@@ -36,7 +42,6 @@ export default class Scene2 {
     load3DModels() {
         const loader = new GLTFLoader()
 
-        // Load the first model (oneeye.glb)
         loader.load('src/3D /oneeye.glb', (gltf) => {
             this._3dmodel = gltf.scene
             this._3dmodel.scale.set(0.1, 0.1, 0.1)
@@ -47,7 +52,6 @@ export default class Scene2 {
             console.error('Error loading oneeye.glb:', error)
         })
 
-        // Load the second model (open.glb)
         loader.load('src/3D /open.glb', (gltf) => {
             this._cherryBlossomsModel = gltf.scene
             this._cherryBlossomsModel.scale.set(1, 1, 1)
@@ -59,7 +63,6 @@ export default class Scene2 {
             console.error('Error loading open.glb:', error)
         })
 
-        // Load the cat model
         loader.load('src/3D /cat.glb', (gltf) => {
             this.catModel = gltf.scene
             this.catModel.scale.set(2, 2, 2)
@@ -112,12 +115,10 @@ export default class Scene2 {
         this.group.add(this.stars)
     }
 
-
-// === Add typewriter text ===
     createTypewriterText() {
         const canvas = document.createElement('canvas')
         canvas.width = 500
-        canvas.height = 320
+        canvas.height = 220
         this.ctx = canvas.getContext('2d')
 
         this.textTexture = new THREE.CanvasTexture(canvas)
@@ -127,37 +128,63 @@ export default class Scene2 {
         this.textSprite.scale.set(5, 2.5, 0.5)
         this.textSprite.position.set(-6.7, 0.2, 6)
 
-    // this.textSprite.scale.set(10, 5, 1) // You might want to adjust this
-   // this.textSprite.position.set(-8, 2, 6) // Moved more to the left and slightly up
-
         this.group.add(this.textSprite)
 
-        this.fullText = "The Daruma doll is a special symbol of good luck, happiness, and never giving up! Some people say it can even protect you from bad things and bring in lots of good things."
+        this.fullText = this.texts[this.currentTextIndex]
         this.currentText = ""
         this.textIndex = 0
         this.updateInterval = 50 // milliseconds between each character
         this.isTextComplete = false
         this.fadeStartTime = 0
+        this.isFading = false
     }
 
     updateTypewriterText() {
         const currentTime = performance.now()
-        if (currentTime - this.lastUpdateTime > this.updateInterval && this.textIndex < this.fullText.length) {
+        
+        if (this.isFading) {
+            const fadeProgress = (currentTime - this.fadeStartTime) / 1000 // 1 second fade
+            if (fadeProgress >= 1) {
+                this.isFading = false
+                this.currentTextIndex = (this.currentTextIndex + 1) % this.texts.length
+                this.fullText = this.texts[this.currentTextIndex]
+                this.currentText = ""
+                this.textIndex = 0
+                this.isTextComplete = false
+            } else {
+                this.drawFadingText(1 - fadeProgress)
+            }
+        } else if (currentTime - this.lastUpdateTime > this.updateInterval && this.textIndex < this.fullText.length) {
             this.currentText += this.fullText[this.textIndex]
             this.textIndex++
             this.lastUpdateTime = currentTime
-
-    //=== text font ===
-            this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
-            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
-            this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
-            this.ctx.font = '33px Arial'
-            this.ctx.fillStyle = 'white'
-            this.wrapText(this.ctx, this.currentText, 20, 50, this.ctx.canvas.width - 40, 40)
-
-            this.textTexture.needsUpdate = true
-
+            this.drawText()
+        } else if (this.textIndex === this.fullText.length && !this.isTextComplete) {
+            this.isTextComplete = true
+            this.fadeStartTime = currentTime + 3000 // Start fading after 3 seconds
+        } else if (this.isTextComplete && currentTime > this.fadeStartTime) {
+            this.isFading = true
         }
+    }
+
+    drawText() {
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        this.ctx.font = '20px Arial'
+        this.ctx.fillStyle = 'white'
+        this.wrapText(this.ctx, this.currentText, 20, 50, this.ctx.canvas.width - 40, 40)
+        this.textTexture.needsUpdate = true
+    }
+
+    drawFadingText(opacity) {
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        this.ctx.font = '20px Arial'
+        this.ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`
+        this.wrapText(this.ctx, this.currentText, 20, 50, this.ctx.canvas.width - 40, 40)
+        this.textTexture.needsUpdate = true
     }
 
     wrapText(context, text, x, y, maxWidth, lineHeight) {
