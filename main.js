@@ -30,7 +30,7 @@ function init() {
 
     // Setup controls
     controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(-1, -1, 0);
+    controls.target.set(-1, 2, 3);
     controls.update();
 
     // Setup lighting

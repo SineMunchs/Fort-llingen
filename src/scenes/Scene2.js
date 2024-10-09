@@ -21,7 +21,7 @@ export default class Scene1 {
             console.log('Model loaded:', gltf);
             this._3dmodel = gltf.scene;
             this._3dmodel.scale.set(0.1, 0.1, 0.1);
-            this._3dmodel.position.set(-5, 1, 0);
+            this._3dmodel.position.set(-4, 1, 0);
             this._3dmodel.rotation.set(0, -0.2, 0);
             this.group.add(this._3dmodel);
         }, undefined, (error) => {
@@ -31,9 +31,9 @@ export default class Scene1 {
         loader.load('src/3D /cherry1.glb', (gltf) => {
             console.log('CherryBlossoms Model loaded:', gltf);
             this._cherryBlossomsModel = gltf.scene;
-            this._cherryBlossomsModel.scale.set(0.2, 0.1, 0.1);
-            this._cherryBlossomsModel.position.set(3, -1, 7);
-            this._cherryBlossomsModel.rotation.set(0, Math.PI / 4, 0);
+            this._cherryBlossomsModel.scale.set(0.11, 0.11, 0.11);
+            this._cherryBlossomsModel.position.set(-2, -1.6, 6);
+            this._cherryBlossomsModel.rotation.set(0, Math.PI / -9, 0);
             this.group.add(this._cherryBlossomsModel);
             this.createTreeSpotlight();
         }, undefined, (error) => {
