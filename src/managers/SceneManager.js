@@ -2,8 +2,6 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GSAP from 'gsap'
 
-
-
 import Scene1 from '../scenes/Scene1'
 import Scene2 from '../scenes/Scene2'
 
@@ -21,7 +19,7 @@ export default class SceneManager {
         this.initScenes()
     }
 
-
+    
 
     // Initialiserer scenerne og tilføjer dem til scenes arrayet.
     initScenes() {
@@ -44,8 +42,6 @@ export default class SceneManager {
         scene.group.position.set(0, 0, 0)
     }
 
-
-    
     /**
      * Afmonterer en scene fra stage.
      * @param {number} sceneId - Indeks for scenen der skal afmonteres.

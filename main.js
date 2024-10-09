@@ -9,6 +9,8 @@ import SceneManager from './src/managers/SceneManager'
 //import Petals from './src/objects/Petals.js'
 import Grass from './src/objects/Grass.js'
 
+
+
 let scene, camera, renderer, controls;
 let sceneManager, /*petals*/ grass, floorMesh;
 
@@ -41,7 +43,7 @@ function init() {
     scene.add(new THREE.AmbientLight(0xffffff, 0.1));
 
     
-    createSkybox();
+    //createSkybox();
     createFloor();
     createObjects();
 
@@ -61,7 +63,7 @@ function dtr(d){
     return d * (Math.PI/180);
 }
 
-function createSkybox() {
+/*function createSkybox() {
     const textureLoader = new THREE.TextureLoader();
     const backgroundTexture = textureLoader.load('public/texture/clouds4.png');
     const backgroundGeometry = new THREE.SphereGeometry(100, 60, 40);
@@ -69,7 +71,7 @@ function createSkybox() {
     const backgroundMaterial = new THREE.MeshBasicMaterial({ map: backgroundTexture });
     const backgroundMesh = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
     scene.add(backgroundMesh);
-}
+}*/
 
 function createFloor() {
     const floorGeometry = new THREE.SphereGeometry(15, 32, 32);
