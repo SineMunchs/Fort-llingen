@@ -14,7 +14,8 @@ export default class Scene3 {
     init() {
         this.createLights()
         this.load3DModels()
-        this.createSkybox()
+        this.createStars()
+        this.addPNGImage()
         this.updateUserData()
         this.setupEventListeners()
     }
@@ -32,6 +33,23 @@ export default class Scene3 {
         // this.group.add(this.spotLightHelper)
     }
 
+    addPNGImage() {
+        const loader = new THREE.TextureLoader()
+        loader.load('public/texture/nr1.png', (texture) => {
+            const material = new THREE.SpriteMaterial({ map: texture })
+            this.sprite = new THREE.Sprite(material)
+            
+            // Set the size of the sprite
+            this.sprite.scale.set(4, 2, 2) // Adjust these values as needed
+            
+            // Position the sprite in the middle of the scene
+            this.sprite.position.set(-5, 0, 6)
+            
+            this.group.add(this.sprite)
+        })
+     
+    }
+    
     load3DModels() {
         const loader = new GLTFLoader()
 
@@ -96,15 +114,38 @@ export default class Scene3 {
         requestAnimationFrame(() => this.animateFlower())
     }
 
-    createSkybox() {
-        const textureLoader = new THREE.TextureLoader()
-        const backgroundTexture = textureLoader.load('public/texture/cloudsgrey.jpg')
-        const backgroundGeometry = new THREE.SphereGeometry(100, 60, 40)
-        backgroundGeometry.scale(-1, 1, 1)
-        const backgroundMaterial = new THREE.MeshBasicMaterial({ map: backgroundTexture })
-        this.skybox = new THREE.Mesh(backgroundGeometry, backgroundMaterial)
-        this.group.add(this.skybox)
+    createStars() {
+        const radius = 500
+        const starCount = 1000
+        const starGeometry = new THREE.BufferGeometry()
+        const starMaterial = new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 2,
+            sizeAttenuation: false
+        })
+        const positions = new Float32Array(starCount * 3)
+
+        for (let i = 0; i < starCount; i++) {
+            const i3 = i * 3
+
+            // Generate random spherical coordinates
+            const theta = 2 * Math.PI * Math.random()
+            const phi = Math.acos(2 * Math.random() - 1)
+            
+            // Add some randomness to the radius
+            const randomRadius = radius + (Math.random() - 0.5) * 50
+
+            // Convert spherical coordinates to Cartesian
+            positions[i3] = randomRadius * Math.sin(phi) * Math.cos(theta)
+            positions[i3 + 1] = randomRadius * Math.sin(phi) * Math.sin(theta)
+            positions[i3 + 2] = randomRadius * Math.cos(phi)
+        }
+
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+        this.stars = new THREE.Points(starGeometry, starMaterial)
+        this.group.add(this.stars)
     }
+
 
     updateUserData() {
         this.group.userData = {

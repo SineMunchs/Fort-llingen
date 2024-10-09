@@ -31,7 +31,6 @@ export default class Scene1 {
         // this.group.add(this.spotLightHelper)
     }
 
-
     load3DModels() {
         const loader = new GLTFLoader()
 
@@ -46,7 +45,7 @@ export default class Scene1 {
             console.error('Error loading oneeye.glb:', error)
         })
 
-        // Load the second model (open.glb)
+        // Load the second model (bridge.glb)
         loader.load('src/3D /bridge.glb', (gltf) => {
             this._cherryBlossomsModel = gltf.scene
             this._cherryBlossomsModel.scale.set(10, 10, 1)
@@ -55,42 +54,41 @@ export default class Scene1 {
             this.group.add(this._cherryBlossomsModel)
             this.createTreeSpotlight()
         }, undefined, (error) => {
-            console.error('Error loading open.glb:', error)
+            console.error('Error loading bridge.glb:', error)
         })
-
-     
     }
-
     addPNGImage() {
         const loader = new THREE.TextureLoader()
-        loader.load('src/assets/start.png', (texture) => {
-            // Set the encoding to sRGB
-            texture.encoding = THREE.sRGBEncoding
-
-            // Create a plane geometry
-            const aspectRatio = texture.image.width / texture.image.height
-            const width = 5  // Adjust this value to change the size of the image
-            const height = width / aspectRatio
-
-            const geometry = new THREE.PlaneGeometry(width, height)
-
-            // Create a MeshStandardMaterial
-            const material = new THREE.MeshStandardMaterial({
-                map: texture,
-                transparent: true,
-                side: THREE.DoubleSide,
-                alphaTest: 0.5 // Adjust this value to control transparency threshold
-            })
-
-            // Create a mesh with the geometry and material
-            this.imageMesh = new THREE.Mesh(geometry, material)
+        loader.load('public/texture/start.png', (texture) => {
+            const material = new THREE.SpriteMaterial({ map: texture })
+            this.sprite = new THREE.Sprite(material)
             
-            // Position the mesh in the middle of the scene
-            this.imageMesh.position.set(0, 0, 0)
-
-            this.group.add(this.imageMesh)
+            // Set the size of the sprite
+            this.sprite.scale.set(5, 5, 5) // Adjust these values as needed
+            
+            // Position the sprite in the middle of the scene
+            this.sprite.position.set(0, 8, 0)
+            
+            this.group.add(this.sprite)
         })
+    
+
+        loader.load('public/texture/nr1.png', (texture) => {
+            const material = new THREE.SpriteMaterial({ map: texture })
+            this.sprite = new THREE.Sprite(material)
+            
+            // Set the size of the sprite
+            this.sprite.scale.set(4, 2, 2) // Adjust these values as needed
+            
+            // Position the sprite in the middle of the scene
+            this.sprite.position.set(-5, 0, 6)
+            
+            this.group.add(this.sprite)
+        })
+
+            
     }
+
     createTreeSpotlight() {
         if (this._cherryBlossomsModel) {
             const treeSpotLight = new THREE.SpotLight(0xffffff, 5, 10, Math.PI / 6, 0.5, 2)
@@ -118,15 +116,10 @@ export default class Scene1 {
 
         for (let i = 0; i < starCount; i++) {
             const i3 = i * 3
-
-            // Generate random spherical coordinates
             const theta = 2 * Math.PI * Math.random()
             const phi = Math.acos(2 * Math.random() - 1)
-            
-            // Add some randomness to the radius
             const randomRadius = radius + (Math.random() - 0.5) * 50
 
-            // Convert spherical coordinates to Cartesian
             positions[i3] = randomRadius * Math.sin(phi) * Math.cos(theta)
             positions[i3 + 1] = randomRadius * Math.sin(phi) * Math.sin(theta)
             positions[i3 + 2] = randomRadius * Math.cos(phi)
@@ -136,8 +129,6 @@ export default class Scene1 {
         this.stars = new THREE.Points(starGeometry, starMaterial)
         this.group.add(this.stars)
     }
-
-
 
     updateUserData() {
         this.group.userData = {
@@ -160,12 +151,8 @@ export default class Scene1 {
     }
 
     adjustModel() {
-        if (this.catModel) {
-            // Rotate the cat on the Y-axis based on mouse X position
-            this.catModel.rotation.y = this.mouse.x * Math.PI / 2
-            
-            // Optionally, you can also add some vertical rotation based on mouse Y position
-            this.catModel.rotation.x = this.mouse.y * Math.PI / 4
+        if (this._3dmodel) {
+            this._3dmodel.rotation.y = this.mouse.x * Math.PI / 2
         }
     }
 
@@ -174,7 +161,6 @@ export default class Scene1 {
         if (this.stars) {
             this.stars.rotation.y += 0.0001
         }
-        // Update spotlight helper if it exists
         if (this.spotLightHelper) {
             this.spotLightHelper.update()
         }

@@ -13,6 +13,7 @@ export default class Scene2 {
         this.createLights()
         this.load3DModels()
         this.createStars()
+        this.addPNGImage()
         this.updateUserData()
         this.setupEventListeners()
     }
@@ -28,6 +29,23 @@ export default class Scene2 {
         // Uncomment the next line if you want to add the spotlight helper to the scene
         // this.spotLightHelper = new SpotLightHelper(this.spotLight)
         // this.group.add(this.spotLightHelper)
+    }
+    addPNGImage() {
+        const loader = new THREE.TextureLoader()
+        loader.load('public/texture/nr1.png', (texture) => {
+            const material = new THREE.SpriteMaterial({ map: texture })
+            this.sprite = new THREE.Sprite(material)
+            
+            // Set the size of the sprite
+            this.sprite.scale.set(4, 2, 2) // Adjust these values as needed
+            
+            // Position the sprite in the middle of the scene
+            this.sprite.position.set(-5, 0, 6)
+            
+            this.group.add(this.sprite)
+        })
+
+            
     }
 
     load3DModels() {
