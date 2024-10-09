@@ -4,6 +4,9 @@ import GSAP from 'gsap'
 
 import Scene1 from '../scenes/Scene1'
 import Scene2 from '../scenes/Scene2'
+import Scene3 from '../scenes/Scene3'
+import Scene4 from '../scenes/Scene4'
+
 
 /**
  * SceneManager klasse til at håndtere flere scener i en Three.js applikation.
@@ -24,8 +27,10 @@ export default class SceneManager {
     // Initialiserer scenerne og tilføjer dem til scenes arrayet.
     initScenes() {
         this.scenes.push(
-            new Scene1(), 
-            new Scene2()
+            new Scene1(),
+            new Scene2(), 
+            new Scene3(),
+            new Scene4(),
         )
     }
 

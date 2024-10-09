@@ -13,6 +13,7 @@ export default class Scene1 {
         this.createLights()
         this.load3DModels()
         this.createStars()
+        this.addPNGImage()
         this.updateUserData()
         this.setupEventListeners()
     }
@@ -30,6 +31,7 @@ export default class Scene1 {
         // this.group.add(this.spotLightHelper)
     }
 
+
     load3DModels() {
         const loader = new GLTFLoader()
 
@@ -45,10 +47,10 @@ export default class Scene1 {
         })
 
         // Load the second model (open.glb)
-        loader.load('src/3D /open.glb', (gltf) => {
+        loader.load('src/3D /bridge.glb', (gltf) => {
             this._cherryBlossomsModel = gltf.scene
-            this._cherryBlossomsModel.scale.set(1, 1, 1)
-            this._cherryBlossomsModel.position.set(-5, -1, -3)
+            this._cherryBlossomsModel.scale.set(10, 10, 1)
+            this._cherryBlossomsModel.position.set(-10, -1, -3)
             this._cherryBlossomsModel.rotation.set(0, Math.PI / -10, 0)
             this.group.add(this._cherryBlossomsModel)
             this.createTreeSpotlight()
@@ -56,18 +58,39 @@ export default class Scene1 {
             console.error('Error loading open.glb:', error)
         })
 
-        //===  CAT LOAD ===
-        loader.load('src/3D /cat.glb', (gltf) => {
-            this.catModel = gltf.scene
-            this.catModel.scale.set(2, 2, 2)
-            this.catModel.position.set(15, 10, -10)
-            this.catModel.rotation.set(0, -0.5, 0)
-            this.group.add(this.catModel)
-        }, undefined, (error) => {
-            console.error('Error loading cat.glb:', error)
-        })
+     
     }
 
+    addPNGImage() {
+        const loader = new THREE.TextureLoader()
+        loader.load('src/assets/start.png', (texture) => {
+            // Set the encoding to sRGB
+            texture.encoding = THREE.sRGBEncoding
+
+            // Create a plane geometry
+            const aspectRatio = texture.image.width / texture.image.height
+            const width = 5  // Adjust this value to change the size of the image
+            const height = width / aspectRatio
+
+            const geometry = new THREE.PlaneGeometry(width, height)
+
+            // Create a MeshStandardMaterial
+            const material = new THREE.MeshStandardMaterial({
+                map: texture,
+                transparent: true,
+                side: THREE.DoubleSide,
+                alphaTest: 0.5 // Adjust this value to control transparency threshold
+            })
+
+            // Create a mesh with the geometry and material
+            this.imageMesh = new THREE.Mesh(geometry, material)
+            
+            // Position the mesh in the middle of the scene
+            this.imageMesh.position.set(0, 0, 0)
+
+            this.group.add(this.imageMesh)
+        })
+    }
     createTreeSpotlight() {
         if (this._cherryBlossomsModel) {
             const treeSpotLight = new THREE.SpotLight(0xffffff, 5, 10, Math.PI / 6, 0.5, 2)
