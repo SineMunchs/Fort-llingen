@@ -71,6 +71,22 @@ export default class Scene1 {
             
             this.group.add(this.sprite)
         })
+    
+
+        loader.load('public/texture/nr1.png', (texture) => {
+            const material = new THREE.SpriteMaterial({ map: texture })
+            this.sprite = new THREE.Sprite(material)
+            
+            // Set the size of the sprite
+            this.sprite.scale.set(4, 2, 2) // Adjust these values as needed
+            
+            // Position the sprite in the middle of the scene
+            this.sprite.position.set(-5, 0, 6)
+            
+            this.group.add(this.sprite)
+        })
+
+            
     }
 
     createTreeSpotlight() {
@@ -86,7 +102,6 @@ export default class Scene1 {
         }
     }
 
-    // === STars maker ===
     createStars() {
         const radius = 500
         const starCount = 1000
@@ -98,8 +113,6 @@ export default class Scene1 {
         })
 
         const positions = new Float32Array(starCount * 3)
-
-        // === sæt stjerner random ===
 
         for (let i = 0; i < starCount; i++) {
             const i3 = i * 3
