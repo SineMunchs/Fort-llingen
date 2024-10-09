@@ -11,7 +11,7 @@ export default class Petals {
     constructor(scene) {
         this.scene = scene;
 
-        this.petalGeometry = new THREE.PlaneGeometry(0.1, 0.1);
+        this.petalGeometry = new THREE.PlaneGeometry(0.2, 0.2);
         this.petalTexture = this.textureLoader.load('public/texture/cherry_blossom_petal.png');
         this.petalMaterial = new THREE.MeshBasicMaterial({
             map: this.petalTexture,
