@@ -5,14 +5,25 @@ import Petals from '../objects/Petals.js'  // Make sure this path is correct
 
 export default class Scene1 {
     constructor() {
-        this.group = new THREE.Group()
-        this.createLight()
-        this.load3DModel()
-        this.createPetals()
+        this.group = new THREE.Group();
+        this.createLight();
+        this.load3DModel();
+        this.createPetals();
         this.updateUserData({
             mountFromPosition: new THREE.Vector3(10, 0, 0),
             unmountToPosition: new THREE.Vector3(-10, 0, 0)
-        })
+        });
+
+        // Add mouse move event listener
+        this.mouse = new THREE.Vector2();  // Store normalized mouse coordinates
+        window.addEventListener('mousemove', this.onMouseMove.bind(this));
+    }
+
+    // Mouse move handler
+    onMouseMove(event) {
+        // Normalize mouse position from (-1, 1)
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     }
 
     load3DModel() {
@@ -42,51 +53,49 @@ export default class Scene1 {
     }
 
     updateUserData(userData) {
-        this.group.userData = userData
+        this.group.userData = userData;
     }
 
     createPetals() {
         this.petals = new Petals(this.group);  // Pass this.group instead of scene
     }
 
+    createSkybox (){
+        this.Skybox = new Skybox(this.group);
+    }
+
     createLight() {
-        const ambientLight = new THREE.AmbientLight(0x999999, 0.5)
-        this.group.add(ambientLight)
+        const ambientLight = new THREE.AmbientLight(0x999999, 0.5);
+        this.group.add(ambientLight);
 
-        const spotLight = new THREE.SpotLight(0xffffff, 8, 20, Math.PI / 4, 0.1, 2)
-        spotLight.position.set(0, 5, 5)
-        this.group.add(spotLight)
+        const spotLight = new THREE.SpotLight(0xffffff, 8, 20, Math.PI / 4, 0.1, 2);
+        spotLight.position.set(0, 5, 5);
+        this.group.add(spotLight);
 
-        this.spotLightHelper = new SpotLightHelper(spotLight)
-        // Uncomment the next line if you want to add the spotlight helper to the scene
-        // this.group.add(this.spotLightHelper)
+        this.spotLightHelper = new SpotLightHelper(spotLight);
     }
 
     createTreeSpotlight() {
         if (this._cherryBlossomsModel) {
-            const treeSpotLight = new THREE.SpotLight(0xffffff, 5, 10, Math.PI / 6, 0.5, 2)
-            treeSpotLight.position.set(0, 5, 5)
-            treeSpotLight.target = this._cherryBlossomsModel
-            this.group.add(treeSpotLight)
-
-            // Uncomment the next line if you want to add a helper for the tree spotlight
-            // const treeSpotLightHelper = new SpotLightHelper(treeSpotLight)
-            // this.group.add(treeSpotLightHelper)
+            const treeSpotLight = new THREE.SpotLight(0xffffff, 5, 10, Math.PI / 6, 0.5, 2);
+            treeSpotLight.position.set(0, 5, 5);
+            treeSpotLight.target = this._cherryBlossomsModel;
+            this.group.add(treeSpotLight);
         }
     }
 
     adjustModel() {
         if (this._3dmodel) {
-            // You can adjust the model's properties here if needed
-            // For example:
-            // this._3dmodel.rotation.y += 0.01
+            // Apply mouse position to model rotation
+            this._3dmodel.rotation.y = this.mouse.x * Math.PI;  // Rotate based on mouse X
+            this._3dmodel.rotation.x = this.mouse.y * Math.PI / 4;  // Rotate based on mouse Y
         }
     }
 
     update() {
-        this.adjustModel()
+        this.adjustModel();
         if (this.petals) {
-            this.petals.updatePetals()
+            this.petals.updatePetals();
         }
     }
 }
