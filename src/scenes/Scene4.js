@@ -77,16 +77,16 @@ export default class Scene4 {
             console.error('Error loading open.glb:', error)
         })
 
-        /*loader.load('src/3D /drop.glb', (gltf) => {
+        loader.load('src/3D /drop.glb', (gltf) => {
             this._cherryBlossomsModel = gltf.scene
-            this._cherryBlossomsModel.scale.set(2, 2, 2)
-            this._cherryBlossomsModel.position.set(8, -5, 5)
-            this._cherryBlossomsModel.rotation.set(0, Math.PI / -10, 0)
+            this._cherryBlossomsModel.scale.set(1, 1, 1)
+            this._cherryBlossomsModel.position.set(9, -8, 5)
+            this._cherryBlossomsModel.rotation.set(0, Math.PI / -5, 0)
             this.group.add(this._cherryBlossomsModel)
             this.createTreeSpotlight()
         }, undefined, (error) => {
             console.error('Error loading open.glb:', error)
-        })*/
+        })
 
         loader.load('src/3D /flower.glb', (gltf) => {
             this._flowerModel = gltf.scene

@@ -11,11 +11,16 @@ export default class Scene1 {
             "The Daruma doll is a special symbol of good luck, happiness, and to never give up! Some people say it can even protect you from bad things and bring in lots of good things.",
             "That's why the Daruma doll was made without any eyes. You see, to give Daruma his eyes, you need to work hard and try your best.",
             "Press the arrow to the right to continue, and see what happens next!",
-
         ];
         this.currentTextIndex = 0;
-        this.sound = null;  // Sound object will be assigned here
-        this.audioLoaded = false;  // Flag to track if the audio has been loaded
+        this.sound = null;
+        this.audioLoaded = false;
+
+        // New properties for pulsating effect
+        this.pulsateTime = 0;
+        this.pulsateSpeed = 2; // Adjust this to change the speed of pulsation
+        this.pulsateAmount = 0.1; // Adjust this to change the amount of pulsation
+
         this.init();
     }
 
@@ -26,28 +31,24 @@ export default class Scene1 {
         this.createTypewriterText();
         this.updateUserData();
         this.setupEventListeners();
-        this.setupAudio();  // Initialize audio functionality
+        this.setupAudio();
     }
 
     setupAudio() {
-        // Create an audio listener and add it to the camera
         const listener = new THREE.AudioListener();
         this.group.add(listener);
 
-        // Create a global audio source
         this.sound = new THREE.Audio(listener);
 
-        // Load the audio file
-       const audioLoader = new THREE.AudioLoader();
+        const audioLoader = new THREE.AudioLoader();
         audioLoader.load('public/audio/daruma2.mp3', (buffer) => {
             this.sound.setBuffer(buffer);
             this.sound.setLoop(false);
             this.sound.setVolume(0.5);
-            this.audioLoaded = true;  // Mark audio as loaded
+            this.audioLoaded = true;
             console.log('Audio loaded and ready to play');
         });
 
-        // Add an event listener for the 'keydown' event to play sound when "M" is pressed
         window.addEventListener('keydown', (event) => {
             if (event.key === 'm' || event.key === 'M') {
                 this.playAudio();
@@ -58,9 +59,9 @@ export default class Scene1 {
     playAudio() {
         if (this.audioLoaded && this.sound) {
             if (this.sound.isPlaying) {
-                this.sound.stop();  // Stop the audio if already playing
+                this.sound.stop();
             }
-            this.sound.play();  // Play the audio
+            this.sound.play();
             console.log('Audio playing');
         }
     }
@@ -77,7 +78,6 @@ export default class Scene1 {
     load3DModels() {
         const loader = new GLTFLoader();
 
-        // Load the Daruma model (oneeye.glb)
         loader.load('src/3D /oneeye.glb', (gltf) => {
             this._3dmodel = gltf.scene;
             this._3dmodel.scale.set(0.1, 0.1, 0.1);
@@ -88,8 +88,6 @@ export default class Scene1 {
             console.error('Error loading oneeye.glb:', error);
         });
 
-
-        // Load the bridge model
         loader.load('src/3D /bridge.glb', (gltf) => {
             this._bridgeModel = gltf.scene;
             this._bridgeModel.scale.set(10, 10, 1);
@@ -101,8 +99,6 @@ export default class Scene1 {
             console.error('Error loading bridge.glb:', error);
         });
 
-
-        // Load the start model
         loader.load('src/3D /start4.glb', (gltf) => {
             this._startModel = gltf.scene;
             this._startModel.scale.set(4, 4, 4);
@@ -112,17 +108,6 @@ export default class Scene1 {
         }, undefined, (error) => {
             console.error('Error loading start4.glb:', error);
         });
-
-       /* // Load the audio model
-        loader.load('src/3D /audio.glb', (gltf) => {
-            this._audioModel = gltf.scene;
-            this._audioModel.scale.set(0.1, 0.1, 0.1);
-            this._audioModel.position.set(-13, 8.5, -5);
-            this._audioModel.rotation.set(0.2, Math.PI / 0.1, 0);
-            this.group.add(this._audioModel);
-        }, undefined, (error) => {
-            console.error('Error loading audio.glb:', error);
-        });*/
     }
 
     createTreeSpotlight() {
@@ -289,6 +274,14 @@ export default class Scene1 {
         }
     }
 
+    pulsateStartModel() {
+        if (this._startModel) {
+            this.pulsateTime += 0.016; // Assuming 60fps, adjust if using a different frame rate
+            const scale = 1 + Math.sin(this.pulsateTime * this.pulsateSpeed) * this.pulsateAmount;
+            this._startModel.scale.set(4 * scale, 4 * scale, 4 * scale);
+        }
+    }
+
     update() {
         this.adjustModel();
         if (this.stars) {
@@ -298,5 +291,6 @@ export default class Scene1 {
             this.spotLightHelper.update();
         }
         this.updateTypewriterText();
+        this.pulsateStartModel(); // New line to update the pulsating effect
     }
 }

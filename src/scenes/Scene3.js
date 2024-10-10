@@ -14,6 +14,12 @@ export default class Scene3 {
             "Press the arrow to the right to continue, and see what happens next!",
         ]
         this.currentTextIndex = 0
+
+        // New properties for cat swaying
+        this.catSwayTime = 0
+        this.catSwaySpeed = 0.5 // Adjust this to change the speed of swaying
+        this.catSwayAmount = 0.5 // Adjust this to change the amount of swaying
+
         this.init()
     }
 
@@ -79,7 +85,7 @@ export default class Scene3 {
             this.catModel = gltf.scene
             this.catModel.scale.set(3, 3, 3)
             this.catModel.position.set(15, 8, -10)
-            this.catModel.rotation.set(0, -0.5, 0)
+            this.catModel.rotation.set(1, -0.5, 0)
             this.group.add(this.catModel)
         }, undefined, (error) => {
             console.error('Error loading cat.glb:', error)
@@ -268,6 +274,14 @@ export default class Scene3 {
         }
     }
 
+    swayCatModel() {
+        if (this.catModel) {
+            this.catSwayTime += 0.016 // Assuming 60fps, adjust if using a different frame rate
+            const swayOffset = Math.sin(this.catSwayTime * this.catSwaySpeed) * this.catSwayAmount
+            this.catModel.position.x = 15 + swayOffset // 15 is the initial X position
+        }
+    }
+
     update() {
         this.adjustModel()
         if (this.stars) {
@@ -277,5 +291,6 @@ export default class Scene3 {
             this.spotLightHelper.update()
         }
         this.updateTypewriterText()
+        this.swayCatModel() // New line to update the cat's position
     }
 }
