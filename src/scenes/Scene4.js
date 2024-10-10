@@ -10,22 +10,19 @@ export default class Scene4 {
         this.flowerPosition = 0
         this.lastUpdateTime = 0
         
-        //Typewriter text
         this.texts = [
             "One quiet day, Daruma noticed a little flower drooping from thirst. Its petals hung limply, too weak to stand tall. Daruma smiled and rolled over to the flower.",
-            "With a gentle nudge, Daruma helped the flower sit up straight again. The flower perked up, happy and full of color.",
+            "Press the letter 'R' to make Daruma roll towards the flower!",
+            "With a gentle nudge, Daruma helped the flower sit up straight again. The flower perked up, happy and full of color.", 
             "Press the arrow to the right to continue, and see what happens next!",
-            "Or press the arrow to the left to stop daruma to save the flower"
         ]
         this.currentTextIndex = 0
         
         this.isRolling = false
-        this.isWaitingToRoll = false
         this.rollStartPosition = new THREE.Vector3()
         this.rollEndPosition = new THREE.Vector3()
         this.rollProgress = 0
         this.rollDuration = 5000 // 5 seconds for rolling animation
-        this.rollDelay = 45000 // 4 seconds delay before rolling starts
         this.rollStartTime = 0
         
         this.init()
@@ -71,6 +68,17 @@ export default class Scene4 {
             this._cherryBlossomsModel = gltf.scene
             this._cherryBlossomsModel.scale.set(1, 1, 1)
             this._cherryBlossomsModel.position.set(-5, -1, -3)
+            this._cherryBlossomsModel.rotation.set(0, Math.PI / -10, 0)
+            this.group.add(this._cherryBlossomsModel)
+            this.createTreeSpotlight()
+        }, undefined, (error) => {
+            console.error('Error loading open.glb:', error)
+        })
+
+        loader.load('src/3D /drop.glb', (gltf) => {
+            this._cherryBlossomsModel = gltf.scene
+            this._cherryBlossomsModel.scale.set(2, 2, 2)
+            this._cherryBlossomsModel.position.set(8, -5, 5)
             this._cherryBlossomsModel.rotation.set(0, Math.PI / -10, 0)
             this.group.add(this._cherryBlossomsModel)
             this.createTreeSpotlight()
@@ -236,6 +244,7 @@ export default class Scene4 {
 
     setupEventListeners() {
         window.addEventListener('mousemove', this.onMouseMove.bind(this))
+        window.addEventListener('keydown', this.onKeyDown.bind(this))
     }
 
     onMouseMove(event) {
@@ -243,38 +252,42 @@ export default class Scene4 {
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
     }
 
+    onKeyDown(event) {
+        if (event.key.toLowerCase() === 'r' && !this.isRolling) {
+            this.setupRollAnimation()
+            this.startRolling()
+        }
+    }
+
     adjustModel() {
-        if (this._3dmodel && !this.isRolling && !this.isWaitingToRoll) {
-            const maxRotation = Math.PI / 5; // 30 degrees
-            const maxVerticalRotation = Math.PI / 12; // 15 degrees
+        if (this._3dmodel && !this.isRolling) {
+            const maxRotation = Math.PI / 5 // 36 degrees
+            const maxVerticalRotation = Math.PI / 12 // 15 degrees
 
             const rotationY = THREE.MathUtils.clamp(
                 this.mouse.x * Math.PI / 2,
                 -maxRotation,
                 maxRotation
-            );
-            this._3dmodel.rotation.y = -0.2 + rotationY;
+            )
+            this._3dmodel.rotation.y = -0.2 + rotationY
             
             const rotationX = THREE.MathUtils.clamp(
                 this.mouse.y * Math.PI / 4,
                 -maxVerticalRotation,
                 maxVerticalRotation
-            );
-            this._3dmodel.rotation.x = rotationX;
+            )
+            this._3dmodel.rotation.x = rotationX
         }
     }
 
     checkModelsLoaded() {
-        if (this._3dmodel && this._flowerModel && !this.isRolling && !this.isWaitingToRoll) {
-            this.setupRollAnimation()
-            this.isWaitingToRoll = true
-            setTimeout(() => {
-                this.startRolling()
-            }, this.rollDelay)
+        if (this._3dmodel && this._flowerModel && !this.isRolling) {
+            console.log("Models loaded. Press 'R' to start rolling.")
         }
     }
 
     setupRollAnimation() {
+        if (!this._3dmodel || !this._flowerModel) return
         this.rollStartPosition.copy(this._3dmodel.position)
         this.rollEndPosition.copy(this._flowerModel.position)
         this.rollEndPosition.y = this._3dmodel.position.y
@@ -282,13 +295,11 @@ export default class Scene4 {
 
     startRolling() {
         this.isRolling = true
-        this.isWaitingToRoll = false
         this.rollProgress = 0
         this.rollStartTime = performance.now()
     }
 
     updateRolling() {
-        if (this.isWaitingToRoll) return
         if (!this.isRolling || !this._3dmodel || !this._flowerModel) return
 
         const currentTime = performance.now()
@@ -304,8 +315,8 @@ export default class Scene4 {
             this._3dmodel.position.y = this.rollStartPosition.y + bobHeight
 
             // Reset x and y rotation during rolling
-            this._3dmodel.rotation.x = 0
-            this._3dmodel.rotation.y = -0.2
+            this._3dmodel.rotation.y = 0
+            this._3dmodel.rotation.x = -0.2
         } else {
             this.isRolling = false
             this._3dmodel.position.copy(this.rollEndPosition)

@@ -8,9 +8,10 @@ export default class Scene3 {
         this.mouse = new THREE.Vector2()
         this.lastUpdateTime = 0
         this.texts = [
-            "So, Lucky Cat gave Daruma one eye to explore the world! And Daruma went on to share a very special message: if you work hard and do your best, you can earn good luck, happiness, and even share it with others!",
+            "So, Lucky Cat gave Daruma one eye to explore the world! ",
+            "Press the letter 'e' to help Daruma see the world!",
+            "Daruma went on to share a very special message: if you work hard and do your best, you can earn good luck, happiness, and even share it with others!",
             "Press the arrow to the right to continue, and see what happens next!",
-
         ]
         this.currentTextIndex = 0
         this.init()
@@ -48,7 +49,6 @@ export default class Scene3 {
             this.darumaNoEye.position.set(0, 1, 0)
             this.darumaNoEye.rotation.set(0, -0.2, 0)
             this.group.add(this.darumaNoEye)
-            this.checkModelsLoaded()
         }, undefined, (error) => {
             console.error('Error loading DarumaNoEye model:', error)
         })
@@ -60,7 +60,6 @@ export default class Scene3 {
             this.darumaOneEye.rotation.set(0, -0.2, 0)
             this.darumaOneEye.visible = false // Initially hidden
             this.group.add(this.darumaOneEye)
-            this.checkModelsLoaded()
         }, undefined, (error) => {
             console.error('Error loading DarumaOneEye model:', error)
         })
@@ -246,7 +245,7 @@ export default class Scene3 {
     }
 
     adjustModel() {
-        if (this.catModel) {
+        if (this.darumaOneEye && this.darumaNoEye) {
             // Limit the rotation range for the Y-axis
             const maxRotation = Math.PI / 6; // 30 degrees
             const rotationY = THREE.MathUtils.clamp(
@@ -254,7 +253,6 @@ export default class Scene3 {
                 -maxRotation,
                 maxRotation
             );
-            this.catModel.rotation.y = -0.5 + rotationY;
             
             // Limit the rotation range for the X-axis
             const maxVerticalRotation = Math.PI / 12; // 15 degrees
@@ -263,7 +261,10 @@ export default class Scene3 {
                 -maxVerticalRotation,
                 maxVerticalRotation
             );
-            this.catModel.rotation.x = rotationX;
+
+            // Apply rotations to both Daruma models
+            this.darumaOneEye.rotation.set(rotationX, -0.2 + rotationY, 0);
+            this.darumaNoEye.rotation.set(rotationX, -0.2 + rotationY, 0);
         }
     }
 

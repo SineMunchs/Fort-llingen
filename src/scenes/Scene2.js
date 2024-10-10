@@ -8,8 +8,8 @@ export default class Scene2 {
         this.mouse = new THREE.Vector2()
         this.lastUpdateTime = 0
         this.texts = [
-            "But there was a little problem—without eyes, how could Daruma see the bright and wonderful world? How could he know the difference between light and darkness?",
-            "Press the arrow to the right to continue, and see what happens next!",
+            "But there was a little problem — without eyes, how could Daruma see the bright and wonderful world? How could he know the difference between light and darkness?",
+            "Press the arrow to the right to continue, and see what happens next!"
         ]
         this.currentTextIndex = 0
         this.init()

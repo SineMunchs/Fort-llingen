@@ -49,8 +49,8 @@ export default class Scene4 {
 
         this.group.add(this.textSprite)
 
-        this.fullText = "The Daruma doll is a special symbol of good luck, happiness, and never giving up! Some people say it can even protect you from bad things and bring in lots of good things."
-        this.currentText = "That was the story of Daruma, the one-eyed doll who brought good luck and happiness to the world!"
+        this.fullText = " That was the story of Daruma, the one-eyed doll who brought good luck and happiness to the world!",
+        this.currentText = "The Daruma doll is a special symbol of good luck, happiness, and never giving up! Some people say it can even protect you from bad things and bring in lots of good things."
         this.textIndex = 0
         this.updateInterval = 50 // milliseconds between each character
         this.isTextComplete = false

@@ -38,8 +38,8 @@ export default class Scene1 {
         this.sound = new THREE.Audio(listener);
 
         // Load the audio file
-        const audioLoader = new THREE.AudioLoader();
-        audioLoader.load('public/audio/Susumu.mp3', (buffer) => {
+       const audioLoader = new THREE.AudioLoader();
+        audioLoader.load('public/audio/daruma1.mp3', (buffer) => {
             this.sound.setBuffer(buffer);
             this.sound.setLoop(false);
             this.sound.setVolume(0.5);
@@ -88,6 +88,7 @@ export default class Scene1 {
             console.error('Error loading oneeye.glb:', error);
         });
 
+
         // Load the bridge model
         loader.load('src/3D /bridge.glb', (gltf) => {
             this._bridgeModel = gltf.scene;
@@ -100,6 +101,7 @@ export default class Scene1 {
             console.error('Error loading bridge.glb:', error);
         });
 
+
         // Load the start model
         loader.load('src/3D /start4.glb', (gltf) => {
             this._startModel = gltf.scene;
@@ -111,7 +113,7 @@ export default class Scene1 {
             console.error('Error loading start4.glb:', error);
         });
 
-        // Load the audio model
+       /* // Load the audio model
         loader.load('src/3D /audio.glb', (gltf) => {
             this._audioModel = gltf.scene;
             this._audioModel.scale.set(0.1, 0.1, 0.1);
@@ -120,7 +122,7 @@ export default class Scene1 {
             this.group.add(this._audioModel);
         }, undefined, (error) => {
             console.error('Error loading audio.glb:', error);
-        });
+        });*/
     }
 
     createTreeSpotlight() {
