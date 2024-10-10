@@ -10,6 +10,8 @@ export default class Scene4 {
         this.flowerPosition = 0
         this.lastUpdateTime = 0
         
+
+        //TEXT
         this.texts = [
             "One quiet day, Daruma noticed a little flower drooping from thirst. Its petals hung limply, too weak to stand tall. Daruma smiled and rolled over to the flower.",
             "Press the letter 'R' to make Daruma roll towards the flower!",
@@ -75,7 +77,7 @@ export default class Scene4 {
             console.error('Error loading open.glb:', error)
         })
 
-        loader.load('src/3D /drop.glb', (gltf) => {
+        /*loader.load('src/3D /drop.glb', (gltf) => {
             this._cherryBlossomsModel = gltf.scene
             this._cherryBlossomsModel.scale.set(2, 2, 2)
             this._cherryBlossomsModel.position.set(8, -5, 5)
@@ -84,7 +86,7 @@ export default class Scene4 {
             this.createTreeSpotlight()
         }, undefined, (error) => {
             console.error('Error loading open.glb:', error)
-        })
+        })*/
 
         loader.load('src/3D /flower.glb', (gltf) => {
             this._flowerModel = gltf.scene

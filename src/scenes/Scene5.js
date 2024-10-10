@@ -8,7 +8,23 @@ export default class Scene4 {
         this.group = new THREE.Group()
         this.mouse = new THREE.Vector2()
         this.lastUpdateTime = 0
-        this.init()
+    
+   //TEXT
+   this.texts = [
+    " That was the story of Daruma, the one-eyed doll who brought good luck and happiness to the world!",
+    "The Daruma doll is a special symbol of good luck, happiness, and never giving up! Some people say it can even protect you from bad things and bring in lots of good things."         
+]
+this.currentTextIndex = 0
+
+this.isRolling = false
+this.rollStartPosition = new THREE.Vector3()
+this.rollEndPosition = new THREE.Vector3()
+this.rollProgress = 0
+this.rollDuration = 5000 // 5 seconds for rolling animation
+this.rollStartTime = 0
+
+    this.init()
+    
     }
 
     init() {
@@ -34,65 +50,6 @@ export default class Scene4 {
         // this.group.add(this.spotLightHelper)
     }
 
-    createTypewriterText() {
-        const canvas = document.createElement('canvas')
-        canvas.width = 500
-        canvas.height = 220
-        this.ctx = canvas.getContext('2d')
-
-        this.textTexture = new THREE.CanvasTexture(canvas)
-        const material = new THREE.SpriteMaterial({ map: this.textTexture })
-        this.textSprite = new THREE.Sprite(material)
-
-        this.textSprite.scale.set(5, 2.5, 0.5)
-        this.textSprite.position.set(-6.7, 0.2, 6)
-
-        this.group.add(this.textSprite)
-
-        this.fullText = " That was the story of Daruma, the one-eyed doll who brought good luck and happiness to the world!",
-        this.currentText = "The Daruma doll is a special symbol of good luck, happiness, and never giving up! Some people say it can even protect you from bad things and bring in lots of good things."
-        this.textIndex = 0
-        this.updateInterval = 50 // milliseconds between each character
-        this.isTextComplete = false
-        this.fadeStartTime = 0
-    }
-
-    updateTypewriterText() {
-        const currentTime = performance.now()
-        if (currentTime - this.lastUpdateTime > this.updateInterval && this.textIndex < this.fullText.length) {
-            this.currentText += this.fullText[this.textIndex]
-            this.textIndex++
-            this.lastUpdateTime = currentTime
-
-            this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
-            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-            this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
-            this.ctx.font = '20px Arial'
-            this.ctx.fillStyle = 'white'
-            this.wrapText(this.ctx, this.currentText, 20, 50, this.ctx.canvas.width - 40, 40)
-
-            this.textTexture.needsUpdate = true
-        }
-    }
-
-    wrapText(context, text, x, y, maxWidth, lineHeight) {
-        const words = text.split(' ')
-        let line = ''
-
-        for (let n = 0; n < words.length; n++) {
-            const testLine = line + words[n] + ' '
-            const metrics = context.measureText(testLine)
-            const testWidth = metrics.width
-            if (testWidth > maxWidth && n > 0) {
-                context.fillText(line, x, y)
-                line = words[n] + ' '
-                y += lineHeight
-            } else {
-                line = testLine
-            }
-        }
-        context.fillText(line, x, y)
-    }
 
     load3DModels() {
         const loader = new GLTFLoader()
@@ -160,6 +117,97 @@ export default class Scene4 {
         const backgroundMaterial = new THREE.MeshBasicMaterial({ map: backgroundTexture })
         this.skybox = new THREE.Mesh(backgroundGeometry, backgroundMaterial)
         this.group.add(this.skybox)
+    }
+
+    createTypewriterText() {
+        const canvas = document.createElement('canvas')
+        canvas.width = 500
+        canvas.height = 220
+        this.ctx = canvas.getContext('2d')
+
+        this.textTexture = new THREE.CanvasTexture(canvas)
+        const material = new THREE.SpriteMaterial({ map: this.textTexture })
+        this.textSprite = new THREE.Sprite(material)
+
+        this.textSprite.scale.set(5, 2.5, 0.5)
+        this.textSprite.position.set(-6.7, 0.2, 6)
+
+        this.group.add(this.textSprite)
+
+        this.fullText = this.texts[this.currentTextIndex]
+        this.currentText = ""
+        this.textIndex = 0
+        this.updateInterval = 50
+        this.isTextComplete = false
+        this.fadeStartTime = 0
+        this.isFading = false
+    }
+
+    updateTypewriterText() {
+        const currentTime = performance.now()
+        
+        if (this.isFading) {
+            const fadeProgress = (currentTime - this.fadeStartTime) / 1000
+            if (fadeProgress >= 1) {
+                this.isFading = false
+                this.currentTextIndex = (this.currentTextIndex + 1) % this.texts.length
+                this.fullText = this.texts[this.currentTextIndex]
+                this.currentText = ""
+                this.textIndex = 0
+                this.isTextComplete = false
+            } else {
+                this.drawFadingText(1 - fadeProgress)
+            }
+        } else if (currentTime - this.lastUpdateTime > this.updateInterval && this.textIndex < this.fullText.length) {
+            this.currentText += this.fullText[this.textIndex]
+            this.textIndex++
+            this.lastUpdateTime = currentTime
+            this.drawText()
+        } else if (this.textIndex === this.fullText.length && !this.isTextComplete) {
+            this.isTextComplete = true
+            this.fadeStartTime = currentTime + 3000
+        } else if (this.isTextComplete && currentTime > this.fadeStartTime) {
+            this.isFading = true
+        }
+    }
+
+    drawText() {
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        this.ctx.font = '20px Arial'
+        this.ctx.fillStyle = 'white'
+        this.wrapText(this.ctx, this.currentText, 20, 50, this.ctx.canvas.width - 40, 40)
+        this.textTexture.needsUpdate = true
+    }
+
+    drawFadingText(opacity) {
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        this.ctx.font = '20px Arial'
+        this.ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`
+        this.wrapText(this.ctx, this.currentText, 20, 50, this.ctx.canvas.width - 40, 40)
+        this.textTexture.needsUpdate = true
+    }
+
+    wrapText(context, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ')
+        let line = ''
+
+        for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' '
+            const metrics = context.measureText(testLine)
+            const testWidth = metrics.width
+            if (testWidth > maxWidth && n > 0) {
+                context.fillText(line, x, y)
+                line = words[n] + ' '
+                y += lineHeight
+            } else {
+                line = testLine
+            }
+        }
+        context.fillText(line, x, y)
     }
 
     updateUserData() {

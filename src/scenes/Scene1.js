@@ -39,7 +39,7 @@ export default class Scene1 {
 
         // Load the audio file
        const audioLoader = new THREE.AudioLoader();
-        audioLoader.load('public/audio/daruma1.mp3', (buffer) => {
+        audioLoader.load('public/audio/daruma2.mp3', (buffer) => {
             this.sound.setBuffer(buffer);
             this.sound.setLoop(false);
             this.sound.setVolume(0.5);
