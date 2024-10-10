@@ -104,7 +104,7 @@ export default class Scene4 {
         const loader = new GLTFLoader()
 
         // Load Daruma model
-        loader.load('src/3D /DarumaEyes.glb', (gltf) => {
+        loader.load('src/3D /Darumasmil.glb', (gltf) => {
             this._3dmodel = gltf.scene
             this._3dmodel.scale.set(0.1, 0.1, 0.1)
             this._3dmodel.position.set(-4, 1, 0)
@@ -119,7 +119,7 @@ export default class Scene4 {
             this._cherryBlossomsModel = gltf.scene
             this._cherryBlossomsModel.scale.set(3, 3, 3)
             //this._cherryBlossomsModel.scale.set(0.11, 0.11, 0.11)
-            this._cherryBlossomsModel.position.set(4, -1.6, -6)
+            this._cherryBlossomsModel.position.set(4, -1.2, -6)
             this._cherryBlossomsModel.rotation.set(0, Math.PI / -9, 0)
             this.group.add(this._cherryBlossomsModel)
             this.createTreeSpotlight()
@@ -130,7 +130,19 @@ export default class Scene4 {
             this._cherryBlossomsModel = gltf.scene
             this._cherryBlossomsModel.scale.set(4, 4, 4)
             //this._cherryBlossomsModel.scale.set(0.11, 0.11, 0.11)
-            this._cherryBlossomsModel.position.set(8, -5, -6)
+            this._cherryBlossomsModel.position.set(8, -2, -6)
+            this._cherryBlossomsModel.rotation.set(0, Math.PI / -9, 0)
+            this.group.add(this._cherryBlossomsModel)
+            this.createTreeSpotlight()
+        }, undefined, (error) => {
+            console.error('Error loading Cherry Blossoms model:', error)
+        })
+
+        loader.load('src/3D /flower.glb', (gltf) => {
+            this._cherryBlossomsModel = gltf.scene
+            this._cherryBlossomsModel.scale.set(20, 20, 20)
+            //this._cherryBlossomsModel.scale.set(0.11, 0.11, 0.11)
+            this._cherryBlossomsModel.position.set(0, 1, 0)
             this._cherryBlossomsModel.rotation.set(0, Math.PI / -9, 0)
             this.group.add(this._cherryBlossomsModel)
             this.createTreeSpotlight()

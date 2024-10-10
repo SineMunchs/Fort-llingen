@@ -63,7 +63,7 @@ export default class Scene3 {
 
         loader.load('src/3D /cat.glb', (gltf) => {
             this.catModel = gltf.scene
-            this.catModel.scale.set(2, 2, 2)
+            this.catModel.scale.set(3, 3, 3)
             this.catModel.position.set(15, 10, -10)
             this.catModel.rotation.set(0, -0.5, 0)
             this.group.add(this.catModel)
