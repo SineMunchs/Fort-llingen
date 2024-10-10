@@ -7,6 +7,11 @@ export default class Scene1 {
         this.group = new THREE.Group()
         this.mouse = new THREE.Vector2()
         this.lastUpdateTime = 0
+        this.texts = [
+            "The Daruma doll is a special symbol of good luck, happiness, and to never give up! Some people say it can even protect you from bad things and bring in lots of good things.",
+            "That’s why the Daruma doll was made without any eyes. You see, to give Daruma his eyes, you need to work hard and try your best.",
+        ]
+        this.currentTextIndex = 0
         this.init()
     }
 
@@ -14,7 +19,7 @@ export default class Scene1 {
         this.createLights()
         this.load3DModels()
         this.createStars()
-        this.addPNGImage()
+       // this.addPNGImage()
         this.createTypewriterText()
         this.updateUserData()
         this.setupEventListeners()
@@ -58,8 +63,21 @@ export default class Scene1 {
         }, undefined, (error) => {
             console.error('Error loading bridge.glb:', error)
         })
+
+          // Load the second model 
+          loader.load('src/3D /start4.glb', (gltf) => {
+            this._cherryBlossomsModel = gltf.scene
+            this._cherryBlossomsModel.scale.set(4, 4, 4)
+            this._cherryBlossomsModel.position.set(28, 10.5, -5)
+            this._cherryBlossomsModel.rotation.set(0.2, Math.PI / -8, 0)
+            this._cherryBlossomsModel.rotation.y += -0.7;
+            this.group.add(this._cherryBlossomsModel)
+            this.createTreeSpotlight()
+        }, undefined, (error) => {
+            console.error('Error loading bridge.glb:', error)
+        })
     }
-    addPNGImage() {
+/*    addPNGImage() {
         const loader = new THREE.TextureLoader()
         loader.load('public/texture/start.png', (texture) => {
             const material = new THREE.SpriteMaterial({ map: texture })
@@ -73,7 +91,7 @@ export default class Scene1 {
             
             this.group.add(this.sprite)
         })
-    }
+    }*/
 
     createTreeSpotlight() {
         if (this._cherryBlossomsModel) {
@@ -118,71 +136,118 @@ export default class Scene1 {
         this.stars = new THREE.Points(starGeometry, starMaterial)
         this.group.add(this.stars)
     }
-// === Add typewriter text ===
-createTypewriterText() {
-    const canvas = document.createElement('canvas')
-    canvas.width = 500
-    canvas.height = 220
-    this.ctx = canvas.getContext('2d')
-
-    this.textTexture = new THREE.CanvasTexture(canvas)
-    const material = new THREE.SpriteMaterial({ map: this.textTexture })
-    this.textSprite = new THREE.Sprite(material)
-
-    this.textSprite.scale.set(5, 2.5, 0.5)
-    this.textSprite.position.set(-6.7, 0.2, 6)
-
-// this.textSprite.scale.set(10, 5, 1) // You might want to adjust this
-// this.textSprite.position.set(-8, 2, 6) // Moved more to the left and slightly up
-
-    this.group.add(this.textSprite)
-
-    this.fullText = "The Daruma doll is a special symbol of good luck, happiness, and to never give up on your dreams! Some people say it can even protect you from bad things and bring in lots of good things."
-    this.currentText = ""
-    this.textIndex = 0
-    this.updateInterval = 50 // milliseconds between each character
-    this.isTextComplete = false
-    this.fadeStartTime = 0
-}
-
-updateTypewriterText() {
-    const currentTime = performance.now()
-    if (currentTime - this.lastUpdateTime > this.updateInterval && this.textIndex < this.fullText.length) {
-        this.currentText += this.fullText[this.textIndex]
-        this.textIndex++
-        this.lastUpdateTime = currentTime
-
-//=== text font ===
+    createTypewriterText() {
+        // Create a canvas element for rendering text
+        const canvas = document.createElement('canvas')
+        canvas.width = 500
+        canvas.height = 220
+        this.ctx = canvas.getContext('2d')
+        
+        // Create a texture from the canvas and apply it to a sprite
+        this.textTexture = new THREE.CanvasTexture(canvas)
+        const material = new THREE.SpriteMaterial({ map: this.textTexture })
+        this.textSprite = new THREE.Sprite(material)
+        
+        // Set the scale and position of the text sprite
+        this.textSprite.scale.set(5, 2.5, 0.5)
+        this.textSprite.position.set(-6.7, 0.2, 6)
+        
+        // Add the text sprite to the group (assuming 'group' is a THREE.Group)
+        this.group.add(this.textSprite)
+        
+        // Initialize variables for the typewriter effect
+        this.fullText = this.texts[this.currentTextIndex]
+        this.currentText = ""
+        this.textIndex = 0
+        this.updateInterval = 50 // milliseconds between each character
+        this.isTextComplete = false
+        this.fadeStartTime = 0
+        this.isFading = false
+    }
+    
+    updateTypewriterText() {
+        const currentTime = performance.now()
+        
+        if (this.isFading) {
+            // Handle text fading out
+            const fadeProgress = (currentTime - this.fadeStartTime) / 1000 // 1 second fade
+            if (fadeProgress >= 1) {
+                // Reset for next text after fade completes
+                this.isFading = false
+                this.currentTextIndex = (this.currentTextIndex + 1) % this.texts.length
+                this.fullText = this.texts[this.currentTextIndex]
+                this.currentText = ""
+                this.textIndex = 0
+                this.isTextComplete = false
+            } else {
+                // Continue fading
+                this.drawFadingText(1 - fadeProgress)
+            }
+        } else if (currentTime - this.lastUpdateTime > this.updateInterval && this.textIndex < this.fullText.length) {
+            // Add next character for typewriter effect
+            this.currentText += this.fullText[this.textIndex]
+            this.textIndex++
+            this.lastUpdateTime = currentTime
+            this.drawText()
+        } else if (this.textIndex === this.fullText.length && !this.isTextComplete) {
+            // Text is complete, prepare for fading
+            this.isTextComplete = true
+            this.fadeStartTime = currentTime + 3000 // Start fading after 3 seconds
+        } else if (this.isTextComplete && currentTime > this.fadeStartTime) {
+            // Start fading
+            this.isFading = true
+        }
+    }
+    
+    drawText() {
+        // Clear the canvas and draw a semi-transparent background
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        
+        // Set text properties and draw the current text
+        this.ctx.font = '20px Arial'
+        this.ctx.fillStyle = 'white'
+        this.wrapText(this.ctx, this.currentText, 20, 50, this.ctx.canvas.width - 40, 40)
+        
+        // Update the texture to reflect changes
+        this.textTexture.needsUpdate = true
+    }
+    
+    drawFadingText(opacity) {
+        // Similar to drawText, but with adjustable opacity for fading effect
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
         this.ctx.font = '20px Arial'
-        this.ctx.fillStyle = 'white'
+        this.ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`
         this.wrapText(this.ctx, this.currentText, 20, 50, this.ctx.canvas.width - 40, 40)
-
         this.textTexture.needsUpdate = true
-
     }
-}
-
-wrapText(context, text, x, y, maxWidth, lineHeight) {
-    const words = text.split(' ')
-    let line = ''
-
-    for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n] + ' '
-        const metrics = context.measureText(testLine)
-        const testWidth = metrics.width
-        if (testWidth > maxWidth && n > 0) {
-            context.fillText(line, x, y)
-            line = words[n] + ' '
-            y += lineHeight
-        } else {
-            line = testLine
+    
+    wrapText(context, text, x, y, maxWidth, lineHeight) {
+        // Split the text into words
+        const words = text.split(' ')
+        let line = ''
+        
+        // Iterate through words, creating new lines when necessary
+        for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' '
+            const metrics = context.measureText(testLine)
+            const testWidth = metrics.width
+            if (testWidth > maxWidth && n > 0) {
+                // If the line is too wide, draw the current line and start a new one
+                context.fillText(line, x, y)
+                line = words[n] + ' '
+                y += lineHeight
+            } else {
+                // If the line fits, add the current word
+                line = testLine
+            }
         }
+        // Draw the last line
+        context.fillText(line, x, y)
     }
-    context.fillText(line, x, y)
-}
 
     updateUserData() {
         this.group.userData = {

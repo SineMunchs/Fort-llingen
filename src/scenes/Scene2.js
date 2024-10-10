@@ -8,10 +8,8 @@ export default class Scene2 {
         this.mouse = new THREE.Vector2()
         this.lastUpdateTime = 0
         this.texts = [
-            "A long time ago, a magical creator named Lucky Cat wanted to give the world luck, happiness, and strength. But these weren't things you just got, you had to earn them!",
-            "That’s why the Daruma doll was made without any eyes. You see, to give Daruma his eyes, you need to work hard and try your best.",
             "But there was a little problem—without eyes, how could Daruma see the bright and wonderful world? How could he know the difference between light and darkness?",
-            "So, Lucky Cat gave Daruma one eye to explore the world! And Daruma went on to share a very special message: if you work hard and do your best, you can *earn* good luck, happiness, and even share it with others!"
+            "So, Lucky Cat gave Daruma one eye to explore the world! And Daruma went on to share a very special message: if you work hard and do your best, you can earn good luck, happiness, and even share it with others!"
         ]
         this.currentTextIndex = 0
         this.init()
@@ -63,15 +61,6 @@ export default class Scene2 {
             console.error('Error loading open.glb:', error)
         })
 
-        loader.load('src/3D /cat.glb', (gltf) => {
-            this.catModel = gltf.scene
-            this.catModel.scale.set(2, 2, 2)
-            this.catModel.position.set(15, 10, -10)
-            this.catModel.rotation.set(0, -0.5, 0)
-            this.group.add(this.catModel)
-        }, undefined, (error) => {
-            console.error('Error loading cat.glb:', error)
-        })
     }
 
     createTreeSpotlight() {

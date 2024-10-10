@@ -6,6 +6,8 @@ import Scene1 from '../scenes/Scene1'
 import Scene2 from '../scenes/Scene2'
 import Scene3 from '../scenes/Scene3'
 import Scene4 from '../scenes/Scene4'
+import Scene5 from '../scenes/Scene5'
+
 
 
 /**
@@ -31,6 +33,7 @@ export default class SceneManager {
             new Scene2(), 
             new Scene3(),
             new Scene4(),
+            new Scene5()
         )
     }
 
