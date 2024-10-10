@@ -9,7 +9,6 @@ export default class Scene3 {
         this.lastUpdateTime = 0
         this.texts = [
             "So, Lucky Cat gave Daruma one eye to explore the world! And Daruma went on to share a very special message: if you work hard and do your best, you can earn good luck, happiness, and even share it with others!"
-            
         ]
         this.currentTextIndex = 0
         this.init()
@@ -40,14 +39,28 @@ export default class Scene3 {
     load3DModels() {
         const loader = new GLTFLoader()
 
-        loader.load('src/3D /oneeye.glb', (gltf) => {
-            this._3dmodel = gltf.scene
-            this._3dmodel.scale.set(0.1, 0.1, 0.1)
-            this._3dmodel.position.set(2, -2, 0)
-            this._3dmodel.rotation.set(0, -0.5, 0)
-            this.group.add(this._3dmodel)
+        // Load both Daruma models
+        loader.load('src/3D /DarumaNoEye.glb', (gltf) => {
+            this.darumaNoEye = gltf.scene
+            this.darumaNoEye.scale.set(0.1, 0.1, 0.1)
+            this.darumaNoEye.position.set(0, 1, 0)
+            this.darumaNoEye.rotation.set(0, -0.2, 0)
+            this.group.add(this.darumaNoEye)
+            this.checkModelsLoaded()
         }, undefined, (error) => {
-            console.error('Error loading oneeye.glb:', error)
+            console.error('Error loading DarumaNoEye model:', error)
+        })
+
+        loader.load('src/3D /DarumaOneEye.glb', (gltf) => {
+            this.darumaOneEye = gltf.scene
+            this.darumaOneEye.scale.set(0.1, 0.1, 0.1)
+            this.darumaOneEye.position.set(0, 1, 0)
+            this.darumaOneEye.rotation.set(0, -0.2, 0)
+            this.darumaOneEye.visible = false // Initially hidden
+            this.group.add(this.darumaOneEye)
+            this.checkModelsLoaded()
+        }, undefined, (error) => {
+            console.error('Error loading DarumaOneEye model:', error)
         })
 
         loader.load('src/3D /open.glb', (gltf) => {
@@ -64,7 +77,7 @@ export default class Scene3 {
         loader.load('src/3D /cat.glb', (gltf) => {
             this.catModel = gltf.scene
             this.catModel.scale.set(3, 3, 3)
-            this.catModel.position.set(15, 10, -10)
+            this.catModel.position.set(15, 8, -10)
             this.catModel.rotation.set(0, -0.5, 0)
             this.group.add(this.catModel)
         }, undefined, (error) => {
@@ -78,10 +91,6 @@ export default class Scene3 {
             treeSpotLight.position.set(0, 5, 5)
             treeSpotLight.target = this._cherryBlossomsModel
             this.group.add(treeSpotLight)
-
-            // Uncomment the next line if you want to add a helper for the tree spotlight
-            // const treeSpotLightHelper = new SpotLightHelper(treeSpotLight)
-            // this.group.add(treeSpotLightHelper)
         }
     }
 
@@ -213,6 +222,7 @@ export default class Scene3 {
 
     setupEventListeners() {
         window.addEventListener('mousemove', this.onMouseMove.bind(this))
+        window.addEventListener('keydown', this.onKeyDown.bind(this))
     }
 
     onMouseMove(event) {
@@ -220,13 +230,38 @@ export default class Scene3 {
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
     }
 
+    onKeyDown(event) {
+        if (event.key === 'e' || event.key === 'E') {
+            this.toggleDarumaModel()
+        }
+    }
+
+    toggleDarumaModel() {
+        if (this.darumaNoEye && this.darumaOneEye) {
+            this.darumaNoEye.visible = !this.darumaNoEye.visible
+            this.darumaOneEye.visible = !this.darumaOneEye.visible
+        }
+    }
+
     adjustModel() {
         if (this.catModel) {
-            // Rotate the cat on the Y-axis based on mouse X position
-            this.catModel.rotation.y = this.mouse.x * Math.PI / 2
+            // Limit the rotation range for the Y-axis
+            const maxRotation = Math.PI / 6; // 30 degrees
+            const rotationY = THREE.MathUtils.clamp(
+                this.mouse.x * Math.PI / 2,
+                -maxRotation,
+                maxRotation
+            );
+            this.catModel.rotation.y = -0.5 + rotationY;
             
-            // Optionally, you can also add some vertical rotation based on mouse Y position
-            this.catModel.rotation.x = this.mouse.y * Math.PI / 4
+            // Limit the rotation range for the X-axis
+            const maxVerticalRotation = Math.PI / 12; // 15 degrees
+            const rotationX = THREE.MathUtils.clamp(
+                this.mouse.y * Math.PI / 4,
+                -maxVerticalRotation,
+                maxVerticalRotation
+            );
+            this.catModel.rotation.x = rotationX;
         }
     }
 

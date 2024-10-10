@@ -34,7 +34,6 @@ export default class Scene4 {
         // this.group.add(this.spotLightHelper)
     }
 
-    // === Add typewriter text ===
     createTypewriterText() {
         const canvas = document.createElement('canvas')
         canvas.width = 500
@@ -48,12 +47,9 @@ export default class Scene4 {
         this.textSprite.scale.set(5, 2.5, 0.5)
         this.textSprite.position.set(-6.7, 0.2, 6)
 
-    // this.textSprite.scale.set(10, 5, 1) // You might want to adjust this
-   // this.textSprite.position.set(-8, 2, 6) // Moved more to the left and slightly up
-
         this.group.add(this.textSprite)
 
-        this.fullText = "The Daruma doll is a special symbol of good luck, happiness, and never giving up! Some people say it can even protect you from bad things and bring in lots of good things."
+        this.fullText = "The Daruma doll is a special symbol of good luck, happiness, and never giving up! Some people say it can even protect you from bad things and bring in lots of good things. -->"
         this.currentText = ""
         this.textIndex = 0
         this.updateInterval = 50 // milliseconds between each character
@@ -68,7 +64,6 @@ export default class Scene4 {
             this.textIndex++
             this.lastUpdateTime = currentTime
 
-    //=== text font ===
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
             this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
             this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
@@ -77,7 +72,6 @@ export default class Scene4 {
             this.wrapText(this.ctx, this.currentText, 20, 50, this.ctx.canvas.width - 40, 40)
 
             this.textTexture.needsUpdate = true
-
         }
     }
 
@@ -114,50 +108,44 @@ export default class Scene4 {
             console.error('Error loading Daruma model:', error)
         })
 
-        // Load Cherry Blossoms model
-        loader.load('src/3D /tree3.glb', (gltf) => {
-            this._cherryBlossomsModel = gltf.scene
-            this._cherryBlossomsModel.scale.set(3, 3, 3)
-            //this._cherryBlossomsModel.scale.set(0.11, 0.11, 0.11)
-            this._cherryBlossomsModel.position.set(4, -1.2, -6)
-            this._cherryBlossomsModel.rotation.set(0, Math.PI / -9, 0)
-            this.group.add(this._cherryBlossomsModel)
-            this.createTreeSpotlight()
-        }, undefined, (error) => {
-            console.error('Error loading Cherry Blossoms model:', error)
-        })
-        loader.load('src/3D /tree3.glb', (gltf) => {
-            this._cherryBlossomsModel = gltf.scene
-            this._cherryBlossomsModel.scale.set(4, 4, 4)
-            //this._cherryBlossomsModel.scale.set(0.11, 0.11, 0.11)
-            this._cherryBlossomsModel.position.set(8, -2, -6)
-            this._cherryBlossomsModel.rotation.set(0, Math.PI / -9, 0)
-            this.group.add(this._cherryBlossomsModel)
-            this.createTreeSpotlight()
-        }, undefined, (error) => {
-            console.error('Error loading Cherry Blossoms model:', error)
-        })
+        // Load Cherry Blossoms models
+        this.loadCherryBlossoms(loader, 3, 3, 3, 4, -1.2, -6, Math.PI / -9)
+        this.loadCherryBlossoms(loader, 4, 4, 4, 8, -2, -6, Math.PI / -9)
+        
+        // Load flower model
+        this.loadFlower(loader)
+    }
 
-        loader.load('src/3D /flower.glb', (gltf) => {
-            this._cherryBlossomsModel = gltf.scene
-            this._cherryBlossomsModel.scale.set(20, 20, 20)
-            //this._cherryBlossomsModel.scale.set(0.11, 0.11, 0.11)
-            this._cherryBlossomsModel.position.set(0, 1, 0)
-            this._cherryBlossomsModel.rotation.set(0, Math.PI / -9, 0)
-            this.group.add(this._cherryBlossomsModel)
-            this.createTreeSpotlight()
+    loadCherryBlossoms(loader, scaleX, scaleY, scaleZ, posX, posY, posZ, rotY) {
+        loader.load('src/3D /tree3.glb', (gltf) => {
+            const cherryBlossoms = gltf.scene
+            cherryBlossoms.scale.set(scaleX, scaleY, scaleZ)
+            cherryBlossoms.position.set(posX, posY, posZ)
+            cherryBlossoms.rotation.set(0, rotY, 0)
+            this.group.add(cherryBlossoms)
+            this.createTreeSpotlight(cherryBlossoms)
         }, undefined, (error) => {
             console.error('Error loading Cherry Blossoms model:', error)
         })
     }
 
-    createTreeSpotlight() {
-        if (this._cherryBlossomsModel) {
-            const treeSpotLight = new THREE.SpotLight(0xffffff, 5, 10, Math.PI / 6, 0.5, 2)
-            treeSpotLight.position.set(0, 5, 5)
-            treeSpotLight.target = this._cherryBlossomsModel
-            this.group.add(treeSpotLight)
-        }
+    loadFlower(loader) {
+        loader.load('src/3D /flower.glb', (gltf) => {
+            const flower = gltf.scene
+            flower.scale.set(26, 26, 26)
+            flower.position.set(0, 1, 0)
+            flower.rotation.set(0, Math.PI / -9, 0)
+            this.group.add(flower)
+        }, undefined, (error) => {
+            console.error('Error loading Flower model:', error)
+        })
+    }
+
+    createTreeSpotlight(target) {
+        const treeSpotLight = new THREE.SpotLight(0xffffff, 5, 10, Math.PI / 6, 0.5, 2)
+        treeSpotLight.position.set(0, 5, 5)
+        treeSpotLight.target = target
+        this.group.add(treeSpotLight)
     }
 
     createPetals() {
@@ -192,8 +180,19 @@ export default class Scene4 {
 
     adjustModel() {
         if (this._3dmodel) {
-            // Only rotate on the X-axis based on mouse Y position
-            this._3dmodel.rotation.y = this.mouse.x * Math.PI / 2
+            // Limit the rotation range
+            const maxRotation = Math.PI / 4; // 45 degrees
+            
+            // Calculate the new rotation, clamped between -maxRotation and maxRotation
+            const newRotationY = Math.max(-maxRotation, Math.min(maxRotation, this.mouse.x * Math.PI / 2));
+            
+            // Apply the new rotation
+            this._3dmodel.rotation.y = newRotationY;
+            
+            // Optionally, add some vertical rotation based on mouse Y position
+            const maxVerticalRotation = Math.PI / 6; // 30 degrees
+            const newRotationX = Math.max(-maxVerticalRotation, Math.min(maxVerticalRotation, this.mouse.y * Math.PI / 4));
+            this._3dmodel.rotation.x = newRotationX;
         }
     }
 
@@ -202,7 +201,6 @@ export default class Scene4 {
         if (this.petals) {
             this.petals.updatePetals()
         }
-        // Update spotlight helper if it exists
         if (this.spotLightHelper) {
             this.spotLightHelper.update()
         }

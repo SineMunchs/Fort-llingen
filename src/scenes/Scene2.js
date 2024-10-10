@@ -9,7 +9,7 @@ export default class Scene2 {
         this.lastUpdateTime = 0
         this.texts = [
             "But there was a little problem—without eyes, how could Daruma see the bright and wonderful world? How could he know the difference between light and darkness?",
-            "So, Lucky Cat gave Daruma one eye to explore the world! And Daruma went on to share a very special message: if you work hard and do your best, you can earn good luck, happiness, and even share it with others!"
+            "So, Lucky Cat gave Daruma one eye to explore the world! And Daruma went on to share a very special message: if you work hard and do your best, you can earn good luck, happiness, and even share it with others! -->"
         ]
         this.currentTextIndex = 0
         this.init()
@@ -60,7 +60,6 @@ export default class Scene2 {
         }, undefined, (error) => {
             console.error('Error loading open.glb:', error)
         })
-
     }
 
     createTreeSpotlight() {
@@ -69,10 +68,6 @@ export default class Scene2 {
             treeSpotLight.position.set(0, 5, 5)
             treeSpotLight.target = this._cherryBlossomsModel
             this.group.add(treeSpotLight)
-
-            // Uncomment the next line if you want to add a helper for the tree spotlight
-            // const treeSpotLightHelper = new SpotLightHelper(treeSpotLight)
-            // this.group.add(treeSpotLightHelper)
         }
     }
 
@@ -212,12 +207,22 @@ export default class Scene2 {
     }
 
     adjustModel() {
-        if (this.catModel) {
-            // Rotate the cat on the Y-axis based on mouse X position
-            this.catModel.rotation.y = this.mouse.x * Math.PI / 2
+        if (this._3dmodel) {
+            const maxRotation = Math.PI / 6; // 30 degrees
+            const rotationY = THREE.MathUtils.clamp(
+                this.mouse.x * Math.PI / 2,
+                -maxRotation,
+                maxRotation
+            );
+            this._3dmodel.rotation.y = -0.5 + rotationY;
             
-            // Optionally, you can also add some vertical rotation based on mouse Y position
-            this.catModel.rotation.x = this.mouse.y * Math.PI / 4
+            const maxVerticalRotation = Math.PI / 12; // 15 degrees
+            const rotationX = THREE.MathUtils.clamp(
+                this.mouse.y * Math.PI / 4,
+                -maxVerticalRotation,
+                maxVerticalRotation
+            );
+            this._3dmodel.rotation.x = rotationX;
         }
     }
 

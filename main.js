@@ -84,9 +84,6 @@ function createFloor() {
 }
 
 
-
-
-
 function createObjects() {
     const boxGeometry = new THREE.BoxGeometry(2, 2, 2);
     const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 2);
