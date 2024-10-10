@@ -10,9 +10,12 @@ export default class Scene4 {
         this.flowerPosition = 0
         this.lastUpdateTime = 0
         
+        //Typewriter text
         this.texts = [
             "One quiet day, Daruma noticed a little flower drooping from thirst. Its petals hung limply, too weak to stand tall. Daruma smiled and rolled over to the flower.",
-            "With a gentle nudge, Daruma helped the flower sit up straight again. The flower perked up, happy and full of color. -->"
+            "With a gentle nudge, Daruma helped the flower sit up straight again. The flower perked up, happy and full of color.",
+            "Press the arrow to the right to continue, and see what happens next!",
+            "Or press the arrow to the left to stop daruma to save the flower"
         ]
         this.currentTextIndex = 0
         

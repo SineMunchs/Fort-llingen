@@ -8,7 +8,9 @@ export default class Scene3 {
         this.mouse = new THREE.Vector2()
         this.lastUpdateTime = 0
         this.texts = [
-            "So, Lucky Cat gave Daruma one eye to explore the world! And Daruma went on to share a very special message: if you work hard and do your best, you can earn good luck, happiness, and even share it with others!"
+            "So, Lucky Cat gave Daruma one eye to explore the world! And Daruma went on to share a very special message: if you work hard and do your best, you can earn good luck, happiness, and even share it with others!",
+            "Press the arrow to the right to continue, and see what happens next!",
+
         ]
         this.currentTextIndex = 0
         this.init()

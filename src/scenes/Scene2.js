@@ -9,7 +9,7 @@ export default class Scene2 {
         this.lastUpdateTime = 0
         this.texts = [
             "But there was a little problem—without eyes, how could Daruma see the bright and wonderful world? How could he know the difference between light and darkness?",
-            "So, Lucky Cat gave Daruma one eye to explore the world! And Daruma went on to share a very special message: if you work hard and do your best, you can earn good luck, happiness, and even share it with others! -->"
+            "Press the arrow to the right to continue, and see what happens next!",
         ]
         this.currentTextIndex = 0
         this.init()

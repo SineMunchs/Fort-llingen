@@ -9,7 +9,9 @@ export default class Scene1 {
         this.lastUpdateTime = 0;
         this.texts = [
             "The Daruma doll is a special symbol of good luck, happiness, and to never give up! Some people say it can even protect you from bad things and bring in lots of good things.",
-            "That's why the Daruma doll was made without any eyes. You see, to give Daruma his eyes, you need to work hard and try your best. --> ",
+            "That's why the Daruma doll was made without any eyes. You see, to give Daruma his eyes, you need to work hard and try your best.",
+            "Press the arrow to the right to continue, and see what happens next!",
+
         ];
         this.currentTextIndex = 0;
         this.sound = null;  // Sound object will be assigned here
@@ -37,7 +39,7 @@ export default class Scene1 {
 
         // Load the audio file
         const audioLoader = new THREE.AudioLoader();
-        audioLoader.load('public/audio/Symbol.mp3', (buffer) => {
+        audioLoader.load('public/audio/Susumu.mp3', (buffer) => {
             this.sound.setBuffer(buffer);
             this.sound.setLoop(false);
             this.sound.setVolume(0.5);
